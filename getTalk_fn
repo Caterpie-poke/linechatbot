@@ -1,0 +1,31 @@
+var talkUrl = "https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk";
+var apikey = "DZZlLk4eGvFuesUMF3OtdLzDeOr4kBuK";
+
+//var test = talkFunction();
+//console.log(test);
+
+//ask関数の引数に入力した言葉に対する返答を返す
+function getTalk(e) {
+  return ask(e);
+}
+
+//a3rtにより返答を返す
+function ask(message){
+  var payload =
+      {
+        "apikey" : apikey,
+        "query" : message
+      };
+  
+  var options =
+      {
+        "method" : "post",
+        "payload" : payload
+      };
+  
+  var response =  UrlFetchApp.fetch(talkUrl, options);
+  var result = JSON.parse(response.getContentText())["results"][0]["reply"];
+
+  return result;
+  //Logger.log(result);
+}
