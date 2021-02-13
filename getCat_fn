@@ -1,0 +1,14 @@
+var catApiUrl = "https://aws.random.cat/meow";
+
+//猫画像のURLを返す
+function getCat() {
+  var catRes = UrlFetchApp.fetch(
+    catApiUrl
+  )
+  var checkUrl = JSON.parse(catRes).file;
+  if(checkUrl.slice(-1) == "f"){
+    return getCat();
+  }else{
+    return checkUrl;
+  };
+}
