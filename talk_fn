@@ -1,0 +1,33 @@
+function talk(e){
+  //会話情報取得
+  return_text = getTalk(e.message.text);
+
+  var message = {
+    "replyToken" : e.replyToken,
+    "messages" : [
+      {
+        "type" : "text",
+        "text" : return_text,
+      }
+    ]
+  };
+
+  var replyData = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer "+ token
+    },
+    "payload" : JSON.stringify(message)
+  };
+  
+  var response = UrlFetchApp.fetch("https://api.line.me/v2/bot/message/reply", replyData);  
+  return response.getResponseCode();
+}
+
+/*
+var ss = SpreadsheetApp.getActiveSheet();
+var lastRow = ss.getLastRow();    
+var cell = ss.getRange(lastRow+1, 3);
+cell.setValue("Hello World2");
+*/
