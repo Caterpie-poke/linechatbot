@@ -1,0 +1,104 @@
+function createRichmenu() {
+  var richmenu = {
+    "size": {
+      "width": 1040,
+      "height": 630
+    },
+    "selected": true,
+    "name": "Test Bot Menu",
+    "chatBarText": "メニューから選んでね！",
+    "areas": [
+      {
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "このLine Botを作ったのは誰ですか？"
+        }
+      },
+      {
+        "bounds": {
+          "x": 347,
+          "y": 0,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "仮想通貨"
+        }
+      },
+      {
+        "bounds": {
+          "x": 694,
+          "y": 0,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "何か話しかけてみてね！"
+        }
+      },
+      {
+        "bounds": {
+          "x": 0,
+          "y": 315,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "ポケモン"
+        }
+      }, {
+        "bounds": {
+          "x": 347,
+          "y": 315,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "猫"
+        }
+      },
+      {
+        "bounds": {
+          "x": 694,
+          "y": 315,
+          "width": 346,
+          "height": 315
+        },
+        "action": {
+          "type": "message",
+          "text": "まだ実装されてないよ"
+        }
+      }
+    ]
+  }
+
+  var replyData = {
+    "method": "post",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    "payload": JSON.stringify(richmenu)
+  };
+
+  var response = UrlFetchApp.fetch(
+    "https://api.line.me/v2/bot/richmenu",
+    replyData
+  );
+
+  var resBody = JSON.parse(response);
+  console.log(resBody);
+
+  var resCode = response.getResponseCode();
+  console.log("ResponseCode: [" + resCode + "]");
+}
