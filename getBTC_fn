@@ -1,0 +1,31 @@
+var bitflyerApiUrl = "https://bitflyer.com/api/echo/price";
+var zaifApiUrl = "https://api.zaif.jp/api/1/ticker/btc_jpy";
+var coincheckApiUrl = "https://coincheck.com/api/ticker";
+
+//BTCの情報をJSON形式で返す
+function getBTC() {
+  //bitflyerの価格
+  var bitflyerRes = UrlFetchApp.fetch(
+    bitflyerApiUrl
+  )
+  var bitflyerValue = JSON.parse(bitflyerRes).mid;
+
+  //zaifの価格
+  var zaifRes = UrlFetchApp.fetch(
+    zaifApiUrl
+  )
+  var zaifValue = JSON.parse(zaifRes).last;
+
+  //coincheckの価格
+  var coincheckRes = UrlFetchApp.fetch(
+    coincheckApiUrl
+  )
+  var coincheckValue = JSON.parse(coincheckRes).last;
+  
+  message = "【BTC販売価格】\n"
+            + "bitflyer : ¥ " + bitflyerValue + "\n"
+            + "zaif     : ¥ " + zaifValue + "\n"
+            + "coincheck: ¥ " + coincheckValue ;
+
+  return message;
+}
