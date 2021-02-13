@@ -1,0 +1,12 @@
+var cityID_num = 400040;
+var weatherApiUrl = "https://weather.tsukumijima.net/api/forecast/city/" + cityID_num;
+
+//console.log(getWeather());
+
+//cityIDの天気情報をJSON形式で返す
+function getWeather() {
+  var weatherRes = UrlFetchApp.fetch(
+    weatherApiUrl
+  )
+  return  "【予報概要】" + JSON.parse(weatherRes).description.text;
+}
