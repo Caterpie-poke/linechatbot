@@ -1,0 +1,242 @@
+var token = "";
+
+
+function doGet(e) {
+  return JSON.stringify(e);
+}
+
+
+function doPost(e) {
+  var events = JSON.parse(e.postData.contents).events;
+  events.forEach(function (event) {
+    if (event.type == "message") {
+      reply(event);
+    }
+  });
+}
+
+function reply(e) {
+  var inputText = e.message.text;
+
+  var message = "";
+
+  var s = JSON.stringify(e);
+
+  if (inputText == "メニュー") {
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": "メニューを選択してね！",
+        },
+        {
+          "type": "imagemap",
+          "baseUrl": "https://raw.githubusercontent.com/MioHorie/linechatbot/master",
+          "altText": "This is an imagemap",
+          "baseSize": {
+            "width": 1040,
+            "height": 630
+          },
+          "actions": [
+            {
+              "type": "message",
+              "text": "このLine Botを作ったのは誰ですか？",
+              "area": {
+                "x": 0,
+                "y": 0,
+                "width": 346,
+                "height": 315
+              }
+            },
+            {
+              "type": "message",
+              "text": "仮想通貨",
+              "area": {
+                "x": 347,
+                "y": 0,
+                "width": 346,
+                "height": 315
+              }
+            },
+            {
+              "type": "message",
+              "text": "何か話しかけてみてね！",
+              "area": {
+                "x": 694,
+                "y": 0,
+                "width": 346,
+                "height": 315
+              }
+            },
+            {
+              "type": "message",
+              "text": "ポケモン",
+              "area": {
+                "x": 0,
+                "y": 315,
+                "width": 346,
+                "height": 315
+              }
+            },
+            {
+              "type": "message",
+              "text": "猫",
+              "area": {
+                "x": 347,
+                "y": 315,
+                "width": 346,
+                "height": 315
+              }
+            },
+            {
+              "type": "message",
+              "text": "まだ実装されてないよ",
+              "area": {
+                "x": 694,
+                "y": 315,
+                "width": 346,
+                "height": 315
+              }
+            }
+          ]
+        }
+      ]
+    }
+  } else if (inputText == "猫") { //堀江API
+    var catURL = getCat();
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "image",
+          "originalContentUrl": catURL,
+          "previewImageUrl": catURL
+        }]
+    };
+  } else if (inputText == "仮想通貨") { //千葉API
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": getBTC(),
+        }]
+    };
+  } else if (inputText == "ポケモン") { //渡辺API
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": "ポケモン<空白><名前>で検索してね",
+        }]
+    };
+  } else if (inputText.startsWith("ポケモン")) { //渡辺API
+    message = {
+      "replyToken": e.replyToken,
+      "messages": []
+    };
+    message.messages.push(getPokemonData(inputText.substring(5)));
+  } else if (inputText == "サッカー") { //鈴木API
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": getWeather(),
+        }]
+    };
+  } else if (inputText == "このLine Botを作ったのは誰ですか？") { //作成者
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": "今回開発に携わったのは、\nDream7（増田）\n銭ゲバ（千葉）\nキャタピー（渡邉）\nヨネゾウ（堀江）\nスズジュン（鈴木）\n\nソースコードはこちらです。\n開発期間2日",
+        }]
+    };
+  } else { //増田API
+    message = {
+      "replyToken": e.replyToken,
+      "messages": [
+        {
+          "type": "text",
+          "text": talk(e),
+        }]
+    };
+  }
+
+
+  var replyData = {
+    "method": "post",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    "payload": JSON.stringify(message)
+  };
+
+  var response = UrlFetchApp.fetch(
+    "https://api.line.me/v2/bot/message/reply",
+    replyData
+  );
+  return response.getResponseCode();
+}
+
+
+/**
+ * @param jaName ポケモンの日本語名
+ * @return Lineのmessageオブジェクト
+ */
+function getPokemonData(jaName) {
+  // APIに送るデータの用意
+  var pokeAPIreplyData = {
+    "method": "post",
+    "headers": {
+      "Content-Type": "application/json",
+    },
+    "payload": JSON.stringify({
+      "lang": "ja",
+      "name": jaName
+    })
+  };
+  // APIの呼び出し
+  var pokeAPIRes = UrlFetchApp.fetch(
+    "https://script.google.com/macros/s/AKfycbwIGzNfWBNm-JQznuP9YDY-ELbHMyZKPEC1Fql3J9zLwWBKHYfMWqAm/exec",
+    pokeAPIreplyData
+  )
+  if (pokeAPIRes.getResponseCode() == '200') {
+    var pokeAPIResJson = JSON.parse(pokeAPIRes);
+    return {
+      "type": "template",
+      "altText": "Pokemon API not support your device",
+      "template": {
+        "type": "buttons",
+        "thumbnailImageUrl": pokeAPIResJson.image_url,
+        "imageAspectRatio": "square",
+        "imageSize": "cover",
+        "imageBackgroundColor": "#FFFFFF",
+        "title": pokeAPIResJson.ja_name,
+        "text": pokeAPIResJson.desc,
+        "actions": [
+          {
+            "type": "uri",
+            "label": "Wiki",
+            "uri": pokeAPIResJson.wiki
+          }
+          , {
+            "type": "uri",
+            "label": "イラスト",
+            "uri": pokeAPIResJson.art_url
+          }
+        ]
+      }
+    };
+  } else {
+    return { type: "text", text: 'ERROR' }
+  }
+}
+
+
+// EOF
