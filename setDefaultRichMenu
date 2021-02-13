@@ -1,0 +1,20 @@
+function setDefaultRichMenu(){
+  var replyData = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "application/json",
+      "Authorization" : "Bearer "+ token
+    },
+  };
+  
+  var response = UrlFetchApp.fetch(
+    `https://api.line.me/v2/bot/user/all/richmenu/${rId}`,
+    replyData
+  );
+  
+  var resBody = JSON.parse(response);
+  console.log(resBody);
+  
+  var resCode = response.getResponseCode();
+  console.log("ResponseCode: ["+resCode+"]");
+}
