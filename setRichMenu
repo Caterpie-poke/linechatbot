@@ -1,0 +1,22 @@
+function setRichMenuImage () {
+  var image=UrlFetchApp.fetch('https://raw.githubusercontent.com/MioHorie/linechatbot/master/1040.png').getBlob();
+  
+  var replyData = {
+    "method" : "post",
+    "headers" : {
+      "Content-Type" : "image/png",
+      "Authorization" : "Bearer "+ token
+    },
+    "payload": image
+  };
+  var response = UrlFetchApp.fetch(
+    `https://api-data.line.me/v2/bot/richmenu/${rId}/content`,
+    replyData
+  );
+  
+  var resBody = JSON.parse(response);
+  console.log(resBody);
+  
+  var resCode = response.getResponseCode();
+  console.log("ResponseCode: ["+resCode+"]");
+}
